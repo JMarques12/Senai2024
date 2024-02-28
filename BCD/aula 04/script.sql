@@ -1,62 +1,56 @@
 drop database if exists transportadora;
-create database transportadora;
+create database transportadora CHARSET=UTF8 COLLATE utf8_general_ci;
 use transportadora;
-create table Clientes(
-    id integer primary key auto_increment,
-    nome varchar(50) not null unique,
-    endereco float(100,3) not null,
-    telefone varchar(20) not null,
-    email varchar(50) not null.
-);
 
-create table funcionarios(
-    id integer primary key auto_increment,
-    nome varchar(50) not null unique,
+-- DDL - CREATE
+create table Cliente(
+    idCliente int not null primary key auto_increment,
+    nome varchar(100) not null,
+    endereco varchar(100) not null,
+    telefone varchar(15) not null,
+    email varchar(100) not null
+);
+create table Funcionario(
+    idFuncionario int not null primary key auto_increment,
+    nome varchar(100) not null default("Motorista"),
     cargo varchar(30) not null,
-    salario float(50,2) not null,
-    
+    salario float(10,2) not null
+);
+create table Rota(
+    idRota int not null primary key auto_increment,
+    origem varchar(100) not null,
+    destino varchar(100) not null,
+    distancia float(10,2)
+);
+create table Veiculo(
+    placa varchar(10) not null primary key,
+    modelo varchar(20) not null,
+    capacidade float(10,2)
 );
 
-
-create table veiculos(
-    id integer primary key auto_increment,
-    placa varchar(50) not null unique,
-    modelo varchar(10) not null,
-    capacidade float(10,2) not null,
-    
+create table Entrega(
+    idEntrega int not null primary key auto_increment,
+    placa varchar(10) not null,
+    motorista int not null,
+    idRota int not null,
+    inicio datetime,
+    fim datetime,
+    status varchar(20)
 );
 
-create table rotas(
-    id integer primary key auto_increment,
-    origem varchar(50) not null unique,
-    destino varchar(50) not null,
-    distancia float(10,2) not null,
-    
+create table pedido(
+    idPedido int not null primary key auto_increment,
+    idCliente int not null,
+    idEntrega int not null,
+    dataPedido timestamp not null,
+    valor float(50,2) not null
 );
+-- DDL - ALTER
+alter table Pedido add foreign key (idCliente) references Cliente(idCliente);
+alter table Pedido add foreign key (idEntrega) references Entrega(idEntrega);
 
-create table entregas(
-    id integer primary key auto_increment,
-    inicio varchar(50) not null unique,
-    fim varchar(50) not null,
-    status varchar(10) not null,
-    id_rota foreign key (reference id rota),
-    id_veiculo foreign key (reference id veiculos),
-    id_motorista foreign key (reference id funcionario),
-);
+alter table Entrega add foreign key (placa) references Veiculo(placa);
+alter table Entrega add foreign key (motorista) references Funcionario(idFuncionario);
+alter table Entrega add foreign key (idRota) references Rota(idRota);
 
-create table pedidos(
-    id integer primary key auto_increment,
-    data pedido date not null,
-    valor varchar(50) not null,
-    id_cliente foreign key (reference id clientes),
-    id_entrega foreign key (reference id entregas),
-);
-
--- DML - Popular com dados de teste
-insert into Clientes( sobrenome, nascimento)
-values
-("","Jair","Silva","1980-01-01"),
-("111.111.111-11","Jair","Silva","1980-01-01"),
-("111.111.111-11","Jair","Silva","1980-01-01"),
-
-select * from Clientes;
+show tables;
