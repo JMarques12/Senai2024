@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escuta ai!</title>
+  <!-- Adicionando Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .img-fixed {
+      width: 200px; /* Defina a largura desejada */
+      height: 200px; /* Defina a altura desejada */
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Escuta ai!</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#player">Player</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="quem.html">Quem Somos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#peca-sua-musica">Peça Sua Música</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Conteúdo -->
+  <div class="container mt-5">
+    <!-- Player de música -->
+    <div id="player">
+      <h2>Player de Música</h2>
+      <div class="row">
+        <div class="col-lg-4">
+          <h3>Playlist 1</h3>
+          <audio controls>
+            <source src="../music/song1.mp3" type="audio/mpeg">
+          </audio>
+          <ul class="playlist">
+            <li data-src="../music/song1.mp3" class="song-item">
+              <img src="../album/save.jpg" class="img-fixed" alt="Imagem">
+              <h4>The Weeknd - Save Your Tears</h4>
+            </li>
+            <!-- Adicione mais músicas aqui -->
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h3>Playlist 2</h3>
+          <audio controls>
+            <source src="../music/song2.mp3" type="audio/mpeg">
+          </audio>
+          <ul class="playlist">
+            <li data-src="../music/song2.mp3" class="song-item">
+              <img src="../album/old.jpg" class="img-fixed" alt="Imagem">
+              <h4>Lil Nas X - Old Town Road</h4>
+            </li>
+            <!-- Adicione mais músicas aqui -->
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h3>Playlist 3</h3>
+          <audio controls>
+            <source src="../music/song3.mp3" type="audio/mpeg">
+          </audio>
+          <ul class="playlist">
+            <li data-src="../music/song3.mp3" class="song-item">
+              <img src="../album/img1.jpg" class="img-fixed" alt="Imagem">
+              <h4>OneRepublic - Counting Stars</h4>
+            </li>
+            <!-- Adicione mais músicas aqui -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Adicionando jQuery e Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

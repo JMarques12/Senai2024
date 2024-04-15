@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Playlist</title>
+  <!-- Adicionando Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Adicionando CSS personalizado -->
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Minha Playlist</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#player">Player</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="quem.html">Quem Somos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#peca-sua-musica">Peça Sua Música</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Conteúdo -->
+  <div class="container mt-5">
+    <h2>Minhas Playlists</h2>
+    <div class="row mt-4">
+      <div class="col-lg-4">
+        <h3>Playlist 1</h3>
+        <!-- Adicionar artistas/gêneros e suas músicas aqui -->
+      </div>
+      <div class="col-lg-4">
+        <h3>Playlist 2</h3>
+        <!-- Adicionar artistas/gêneros e suas músicas aqui -->
+      </div>
+      <div class="col-lg-4">
+        <h3>Playlist 3</h3>
+        <!-- Adicionar artistas/gêneros e suas músicas aqui -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Player de música -->
+  <div id="player" class="container mt-5">
+    <h2>Player de Música</h2>
+    <audio id="audio" controls>
+      <!-- Adicionar a primeira música da playlist aqui -->
+      Seu navegador não suporta o elemento de áudio.
+    </audio>
+    <div class="controls mt-3">
+      <button id="prevBtn" class="btn btn-primary">Anterior</button>
+      <button id="playPauseBtn" class="btn btn-success">Play</button>
+      <button id="nextBtn" class="btn btn-primary">Próxima</button>
+    </div>
+  </div>
+
+  <!-- Script para controle do player de música -->
+  <script src="scripts.js"></script>
+</body>
+</html>
