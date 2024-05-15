@@ -12,3 +12,18 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Clientes{
+  id Int @id @default(autoincrement())
+  nome String @db.VarChar(255)
+  cpf String @db.Varchar(14) @unique
+  email String? @db.VarChar(255)
+  telefones Telefones[]  
+}
+
+model Telefones {
+  id Int @id @default(autoincrement())
+  id_cliente Int
+  telefone String @db.VarChar(20) @unique
+  clinte Clientes @relation(fields: [id_cliente], references: [id]) 
+}
