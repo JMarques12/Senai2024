@@ -6,6 +6,7 @@ const hoteis = require('./hoteis');
 const router = express.Router();
 
 
+
 router.post('/destinos', async (req, res) => {
     const { nome, valor, data } = req.body;
     try {
