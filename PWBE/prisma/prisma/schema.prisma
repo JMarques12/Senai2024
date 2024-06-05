@@ -17,6 +17,8 @@ model Destino {
   nome  String
   valor Float
   data  DateTime
+  pontos PontoTuristico[]
+  hoteis Hotel[]
 }
 
 model PontoTuristico {
@@ -25,6 +27,9 @@ model PontoTuristico {
   endereco String
   telefone String
   valor    Float
+
+  id_destino Int
+  destinos Destino @relation(fields: [id_destino], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Hotel {
@@ -34,4 +39,8 @@ model Hotel {
   avaliacao  Float
   email      String
   site       String
+
+  id_destino Int
+  destinos Destino @relation(fields: [id_destino], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
 }

@@ -5,68 +5,23 @@ const hoteis = require('./hoteis');
 
 const router = express.Router();
 
+//Routes Destino
+router.get('/destino', destino.read);
+router.post('/destino', destino.create);
+router.put('/destino/:id', destino.update);
+router.delete('/destino/:id', destino.del);
 
+//Routes Hoteis
+router.get('/hoteis', hoteis.read);
+router.post('/hoteis', hoteis.create);
+router.put('/hoteis/:id', hoteis.update);
+router.delete('/hoteis/:id', hoteis.del);
 
-router.post('/destinos', async (req, res) => {
-    const { nome, valor, data } = req.body;
-    try {
-        const novoDestino = await destino.criarDestino(nome, valor, data);
-        res.status(201).json(novoDestino);
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
+//Routes Pontos_Turisticos
+router.get('/pontos_turisticos', pontoturistico.read);
+router.post('/pontos_turisticos', pontoturistico.create);
+router.put('/pontos_turisticos/:id', pontoturistico.update);
+router.delete('/pontos_turisticos/:id', pontoturistico.del);
 
-
-router.get('/destinos', async (req, res) => {
-    try {
-        const destinos = await destino.listarDestinos();
-        res.status(200).json(destinos);
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
-
-
-router.post('/pontosturisticos', async (req, res) => {
-    const { nome, endereco, telefone, valor } = req.body;
-    try {
-        const novoPontoTuristico = await pontoturistico.criarPontoTuristico(nome, endereco, telefone, valor);
-        res.status(201).json(novoPontoTuristico);
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
-
-
-router.get('/pontosturisticos', async (req, res) => {
-    try {
-        const pontosTuristicos = await pontoturistico.listarPontosTuristicos();
-        res.status(200).json(pontosTuristicos);
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
-
-
-router.post('/hoteis', async (req, res) => {
-    const { nome, valor, avaliacao, email, site } = req.body;
-    try {
-        const novoHotel = await hoteis.criarHotel(nome, valor, avaliacao, email, site);
-        res.status(201).json(novoHotel);
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
-
-
-router.get('/hoteis', async (req, res) => {
-    try {
-        const hoteisListados = await hoteis.listarHoteis();
-        res.status(200).json(hoteisListados);
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
 
 module.exports = router;

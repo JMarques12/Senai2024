@@ -2,34 +2,41 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-// Função para criar um novo ponto turístico
-async function criarPontoTuristico(nome, endereco, telefone, valor) {
-    try {
-        const pontoTuristico = await prisma.pontoTuristico.create({
-            data: {
-                nome,
-                endereco,
-                telefone,
-                valor
-            }
-        });
-        return pontoTuristico;
-    } catch (error) {
-        throw new Error(`Erro ao criar ponto turístico: ${error.message}`);
-    }
+const create = async (req, res) => {
+    const { data } = req.body;
+    const pontos = await prisma.pontoTuristico.create({
+        data
+    })
+
+    res.status(200).json(pontos).end();
+};
+
+const read = async (req, res) => {
+    const pontos = await prisma.pontoTuristico.findMany()
+
+    res.status(200).json(pontos).end();
+};
+
+const update = async (req, res) => {
+    const data = req.body;
+    const pontos = await prisma.pontoTuristico.update({
+        where: { id: Number(req.params.id) }, data
+    })
+
+    res.status(200).json(pontos).end();
 }
 
-// Função para listar todos os pontos turísticos
-async function listarPontosTuristicos() {
-    try {
-        const pontosTuristicos = await prisma.pontoTuristico.findMany();
-        return pontosTuristicos;
-    } catch (error) {
-        throw new Error(`Erro ao listar pontos turísticos: ${error.message}`);
-    }
+const del = async (req, res) => {
+    const pontos = await prisma.pontoTuristico.delete({
+        where: {id: Number(req.params.id)}
+    })
+
+    res.status(200).json(pontos).end();
 }
 
 module.exports = {
-    criarPontoTuristico,
-    listarPontosTuristicos
+    create,
+    read,
+    update,
+    del
 };
