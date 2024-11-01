@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, FlatList, TouchableOpacity, Image, Picker } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, FlatList, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { db, storage } from './firebaseconfig';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { ScrollView } from 'react-native-web';
 
 export default function App() {
-  const [nome, setNome] = useState('');
-  const [autor, setAutor] = useState('');
-  const [editora, setEditora] = useState('');
-  const [ano, setAno] = useState('');
-  const [flag, setFlag] = useState('não lido');
+  const [titulo, setTitulo] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [localizacao, setLocalizacao] = useState('');
+  const [data, setData] = useState(new Date());
   const [imageUri, setImageUri] = useState(null);
-  const [livros, setLivros] = useState([]);
+  const [entradas, setEntradas] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [editingLivroId, setEditingLivroId] = useState(null);
-
-  const flags = ['já li', 'não lido', 'lendo'];
+  const [editingEntradaId, setEditingEntradaId] = useState(null);
 
   const selecionarImagem = () => {
     launchImageLibrary({ mediaType: 'photo' }, (response) => {
@@ -38,139 +34,117 @@ export default function App() {
     const response = await fetch(imageUri);
     const blob = await response.blob();
     const filename = imageUri.substring(imageUri.lastIndexOf('/') + 1);
-    const storageRef = ref(storage, `livros/${filename}`);
+    const storageRef = ref(storage, `viagens/${filename}`);
     
     await uploadBytes(storageRef, blob);
     return await getDownloadURL(storageRef);
   };
 
-  const adicionarOuAtualizarLivro = async () => {
+  const adicionarOuAtualizarEntrada = async () => {
     try {
       setLoading(true);
       const imageUrl = await uploadImage();
 
-      if (editingLivroId) {
-        const livroRef = doc(db, 'livros', editingLivroId);
-        await updateDoc(livroRef, {
-          nome,
-          autor,
-          editora,
-          ano,
+      if (editingEntradaId) {
+        const entradaRef = doc(db, 'entradas', editingEntradaId);
+        await updateDoc(entradaRef, {
+          titulo,
+          descricao,
+          data,
+          localizacao,
           imageUrl: imageUrl || null,
-          flag
         });
-        alert('Livro atualizado com sucesso!');
-        setEditingLivroId(null);
+        alert('Entrada atualizada com sucesso!');
+        setEditingEntradaId(null);
       } else {
-        await addDoc(collection(db, 'livros'), {
-          nome,
-          autor,
-          editora,
-          ano,
+        await addDoc(collection(db, 'entradas'), {
+          titulo,
+          descricao,
+          data,
+          localizacao,
           imageUrl: imageUrl || null,
-          flag
         });
-        alert('Livro adicionado com sucesso!');
+        alert('Entrada adicionada com sucesso!');
       }
 
-      setNome('');
-      setAutor('');
-      setEditora('');
-      setAno('');
-      setFlag('não lido');
-      setImageUri(null);
-      fetchLivros();
+      resetForm();
+      fetchEntradas();
     } catch (e) {
-      console.error("Erro ao salvar livro: ", e);
+      console.error("Erro ao salvar entrada: ", e);
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchLivros = async () => {
+  const fetchEntradas = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, 'livros'));
-      const livrosList = querySnapshot.docs.map(doc => ({
+      const querySnapshot = await getDocs(collection(db, 'entradas'));
+      const entradasList = querySnapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id
       }));
-      setLivros(livrosList);
+      setEntradas(entradasList);
     } catch (e) {
-      console.error("Erro ao buscar livros: ", e);
+      console.error("Erro ao buscar entradas: ", e);
     }
   };
 
-  const editarLivro = (livro) => {
-    setNome(livro.nome);
-    setAutor(livro.autor);
-    setEditora(livro.editora);
-    setAno(livro.ano);
-    setFlag(livro.flag);
-    setImageUri(livro.imageUrl);
-    setEditingLivroId(livro.id);
+  const editarEntrada = (entrada) => {
+    setTitulo(entrada.titulo);
+    setDescricao(entrada.descricao);
+    setLocalizacao(entrada.localizacao);
+    setImageUri(entrada.imageUrl);
+    setEditingEntradaId(entrada.id);
   };
 
-  const excluirLivro = async (livroId) => {
+  const excluirEntrada = async (entradaId) => {
     try {
-      await deleteDoc(doc(db, 'livros', livroId));
-      alert('Livro excluído com sucesso!');
-      fetchLivros();
+      await deleteDoc(doc(db, 'entradas', entradaId));
+      alert('Entrada excluída com sucesso!');
+      fetchEntradas();
     } catch (e) {
-      console.error("Erro ao excluir livro: ", e);
+      console.error("Erro ao excluir entrada: ", e);
     }
+  };
+
+  const resetForm = () => {
+    setTitulo('');
+    setDescricao('');
+    setLocalizacao('');
+    setImageUri(null);
   };
 
   useEffect(() => {
-    fetchLivros();
+    fetchEntradas();
   }, []);
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Minha Biblioteca</Text>
+      <Text style={styles.title}>Diário de Viagem</Text>
       
-      <Text style={styles.label}>Nome do Livro</Text>
+      <Text style={styles.label}>Título da Entrada</Text>
       <TextInput
         style={styles.input}
-        placeholder="Digite o nome do livro"
-        value={nome}
-        onChangeText={setNome}
+        placeholder="Digite o título da entrada"
+        value={titulo}
+        onChangeText={setTitulo}
       />
       
-      <Text style={styles.label}>Autor</Text>
+      <Text style={styles.label}>Descrição</Text>
       <TextInput
         style={styles.input}
-        placeholder="Digite o autor do livro"
-        value={autor}
-        onChangeText={setAutor}
+        placeholder="Digite a descrição da entrada"
+        value={descricao}
+        onChangeText={setDescricao}
       />
 
-      <Text style={styles.label}>Editora</Text>
+      <Text style={styles.label}>Localização</Text>
       <TextInput
         style={styles.input}
-        placeholder="Digite a editora do livro"
-        value={editora}
-        onChangeText={setEditora}
+        placeholder="Digite a localização"
+        value={localizacao}
+        onChangeText={setLocalizacao}
       />
-
-      <Text style={styles.label}>Ano</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Digite o ano de publicação"
-        value={ano}
-        onChangeText={setAno}
-        keyboardType="numeric"
-      />
-
-      <Text style={styles.label}>Status</Text>
-      <Picker
-        selectedValue={flag}
-        style={styles.picker}
-        onValueChange={(itemValue) => setFlag(itemValue)}
-      >
-        {flags.map((flagOption, index) => (
-          <Picker.Item key={index} label={flagOption} value={flagOption} />
-        ))}
-      </Picker>
 
       <Button 
         title="Selecionar Imagem" 
@@ -183,40 +157,39 @@ export default function App() {
       )}
 
       <Button 
-        title={loading ? "Salvando..." : editingLivroId ? "Atualizar Livro" : "Adicionar Livro"} 
-        onPress={adicionarOuAtualizarLivro} 
+        title={loading ? "Salvando..." : editingEntradaId ? "Atualizar Entrada" : "Adicionar Entrada"} 
+        onPress={adicionarOuAtualizarEntrada} 
         color="#ff0000"
       />
 
-      <Text style={styles.sectionTitle}>Lista de Livros</Text>
+      <Text style={styles.sectionTitle}>Entradas de Viagem</Text>
       <FlatList
-        data={livros}
+        data={entradas}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.livroItem}>
+          <View style={styles.entradaItem}>
             {item.imageUrl ? (
-              <Image source={{ uri: item.imageUrl }} style={styles.livroImage} />
+              <Image source={{ uri: item.imageUrl }} style={styles.entradaImage} />
             ) : (
-              <Icon name="book" size={50} color="#4682b4" style={styles.livroIcon} />
+              <Icon name="image" size={50} color="#4682b4" style={styles.entradaIcon} />
             )}
-            <View style={styles.livroDetails}>
-              <Text style={styles.livroNome}>{item.nome}</Text>
-              <Text style={styles.livroAutor}>Autor: {item.autor}</Text>
-              <Text style={styles.livroEditora}>Editora: {item.editora}</Text>
-              <Text style={styles.livroAno}>Ano: {item.ano}</Text>
-              <Text style={styles.livroFlag}>Status: {item.flag}</Text>
+            <View style={styles.entradaDetails}>
+              <Text style={styles.entradaTitulo}>{item.titulo}</Text>
+              <Text style={styles.entradaDescricao}>{item.descricao}</Text>
+              <Text style={styles.entradaLocalizacao}>Localização: {item.localizacao}</Text>
+              <Text style={styles.entradaData}>Data: {item.data.toDate().toLocaleDateString()}</Text>
             </View>
             <View style={styles.actionButtons}>
-              <TouchableOpacity onPress={() => editarLivro(item)} style={styles.actionButton}>
+              <TouchableOpacity onPress={() => editarEntrada(item)} style={styles.actionButton}>
                 <Icon name="edit" size={25} color="#4682b4" />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => excluirLivro(item.id)} style={styles.actionButton}>
+              <TouchableOpacity onPress={() => excluirEntrada(item.id)} style={styles.actionButton}>
                 <Icon name="trash" size={25} color="#ff6347" />
               </TouchableOpacity>
             </View>
           </View>
         )}
-        style={styles.livroList}
+        style={styles.entradaList}
       />
     </ScrollView>
   );
@@ -225,7 +198,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: '#fff',
     padding: 20
   },
   title: {
@@ -249,16 +222,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#fff',
   },
-  picker: {
-    width: '100%',
-    marginBottom: 15,
-  },
-  button: {
-    backgroundColor: '#fa6b6b',
-    color: '#fff',
-    padding: 10,
-    borderRadius: 5,
-  },
   imagePreview: {
     width: '100%',
     height: 200,
@@ -272,13 +235,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
-  livroList: {
+  entradaList: {
     marginTop: 10,
   },
-  livroItem: {
+  entradaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#f9f9f9',
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
@@ -288,36 +251,32 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 3,
   },
-  livroIcon: {
+  entradaIcon: {
     marginRight: 15,
   },
-  livroImage: {
+  entradaImage: {
     width: 50,
     height: 50,
     borderRadius: 5,
     marginRight: 15,
   },
-  livroDetails: {
+  entradaDetails: {
     flex: 1,
   },
-  livroNome: {
+  entradaTitulo: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
   },
-  livroAutor: {
+  entradaDescricao: {
     fontSize: 16,
     color: '#555',
   },
-  livroEditora: {
+  entradaLocalizacao: {
     fontSize: 16,
     color: '#555',
   },
-  livroAno: {
-    fontSize: 16,
-    color: '#555',
-  },
-  livroFlag: {
+  entradaData: {
     fontSize: 16,
     color: '#555',
   },
